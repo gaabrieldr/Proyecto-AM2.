@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="es" class="h-full bg-slate-950 text-slate-100">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Análisis Matemático II - Portal de Proyectos Paramétricos</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Three.js para la simulación interactiva 3D -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <!-- GeoGebra Web API -->
+  <script src="https://www.geogebra.org/apps/deployggb.js"></script>
+  <!-- QRCode.js Library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Fira+Code:wght@400;500&display=swap');
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+    code, pre {
+      font-family: 'Fira Code', monospace;
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: #0f172a;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #334155;
+      border-radius: 3px;
+    }
+  </style>
+</head>
+<body class="h-full flex flex-col overflow-x-hidden bg-slate-950 text-slate-100">
+
+  <!-- Header Superior -->
+  <header class="border-b border-slate-800 bg-slate-900/90 backdrop-blur sticky top-0 z-40">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      
+      <!-- Marca / Título -->
+      <div class="flex items-center space-x-3 cursor-pointer" onclick="navigateTo('home')">
+        <div class="p-2 bg-indigo-600/20 text-indigo-400 rounded-xl border border-indigo-500/30">
+          <i class="fa-solid fa-shapes text-xl"></i>
+        </div>
+        <div>
+          <h1 class="font-bold text-lg text-white leading-tight">Análisis Matemático II</h1>
+          <p class="text-xs text-slate-400">Portal de Parametrizaciones & Curvas 3D</p>
+        </div>
+      </div>
+
+      <!-- Botón de Menú Superior Derecho -->
+      <div class="flex items-center space-x-3">
+        <span class="hidden sm:inline-block text-xs text-slate-400 font-medium">Navegar proyectos</span>
+        <button id="menu-btn" onclick="toggleMenu()" class="relative p-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl shadow-lg shadow-indigo-600/20 transition flex items-center justify-center space-x-2 border border-indigo-400/30">
+          <i class="fa-solid fa-bars text-lg"></i>
+          <span class="text-xs font-semibold hidden md:inline-block">Menú</span>
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- Menú Desplegable / Sidebar Lateral Overlay -->
+  <div id="menu-overlay" onclick="toggleMenu()" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden opacity-0 transition-opacity duration-300"></div>
+
+  <aside id="sidebar" class="fixed top-0 right-0 h-full w-80 sm:w-96 bg-slate-900 border-l border-slate-800 shadow-2xl z-50 transform translate-x-full transition-transform duration-300 ease-in-out p-6 flex flex-col justify-between">
+    <div class="space-y-6">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-4">
+        <div class="flex items-center space-x-2 text-indigo-400">
+          <i class="fa-solid fa-compass text-xl"></i>
+          <h2 class="font-bold text-base text-white">Menú de Selección</h2>
+        </div>
+        <button onclick="toggleMenu()" class="p-2 text-slate-400 hover:text-white rounded-lg hover:bg-slate-800 transition">
+          <i class="fa-solid fa-xmark text-lg"></i>
+        </button>
+      </div>
+
+      <p class="text-xs text-slate-400">Selecciona el módulo de trabajo o proyecto que deseas visualizar:</p>
+
+      <!-- Lista de Enlaces -->
+      <nav class="space-y-2">
+        <button onclick="navigateTo('home'); toggleMenu();" class="w-full flex items-center space-x-3 p-3 rounded-xl bg-slate-800/50 hover:bg-slate-800 text-slate-200 hover:text-white border border-slate-700/50 transition text-left group">
+          <i class="fa-solid fa-house text-indigo-400 group-hover:scale-110 transition"></i>
+          <div>
+            <div class="font-semibold text-xs">Inicio / Bienvenida</div>
+            <div class="text-[10px] text-slate-400">Presentación del portal</div>
+          </div>
+        </button>
+
+        <button onclick="navigateTo('football'); toggleMenu();" class="w-full flex items-center space-x-3 p-3 rounded-xl bg-indigo-900/30 hover:bg-indigo-900/50 text-indigo-200 hover:text-white border border-indigo-500/30 transition text-left group">
+          <i class="fa-solid fa-football text-amber-500 group-hover:scale-110 transition"></i>
+          <div>
+            <div class="font-semibold text-xs text-white">Pelota de Fútbol Americano 3D</div>
+            <div class="text-[10px] text-slate-400">Parametrización & GeoGebra</div>
+          </div>
+        </button>
+
+        <button onclick="navigateTo('qr'); toggleMenu();" class="w-full flex items-center space-x-3 p-3 rounded-xl bg-emerald-900/30 hover:bg-emerald-900/50 text-emerald-200 hover:text-white border border-emerald-500/30 transition text-left group">
+          <i class="fa-solid fa-qrcode text-emerald-400 group-hover:scale-110 transition"></i>
+          <div>
+            <div class="font-semibold text-xs text-white">Generador QR & Publicación</div>
+            <div class="text-[10px] text-slate-400">Escaneo móvil y hosting Web</div>
+          </div>
+        </button>
+
+        <!-- Placeholder para futuros proyectos -->
+        <div class="pt-4 border-t border-slate-800/80">
+          <span class="text-[10px] font-bold uppercase tracking-wider text-slate-500 block mb-2">Próximos Proyectos</span>
+          <div class="p-3 rounded-xl bg-slate-950/40 border border-slate-800/60 opacity-60 flex items-center space-x-3 text-slate-400">
+            <i class="fa-solid fa-tornado text-slate-500"></i>
+            <div>
+              <div class="text-xs font-semibold">Superficies de Revolución</div>
+              <div class="text-[10px]">Módulo en preparación</div>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </div>
+
+    <div class="text-center border-t border-slate-800 pt-4">
+      <p class="text-[11px] text-slate-500">Análisis Matemático II • Cátedra 2026</p>
+    </div>
+  </aside>
+
+  <!-- CONTENEDOR DE SECCIONES (PÁGINAS) -->
+  <main class="flex-1 relative">
+
+    <!-- 1. SECCIÓN HOME / INICIO -->
+    <section id="sec-home" class="p-6 sm:p-12 max-w-6xl mx-auto space-y-12 animate-fade-in">
+      
+      <!-- Hero Banner -->
+      <div class="text-center space-y-4 max-w-3xl mx-auto pt-6">
+        <span class="px-3 py-1 bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 rounded-full text-xs font-semibold inline-flex items-center space-x-2">
+          <i class="fa-solid fa-graduation-cap"></i>
+          <span>Modelado Matemático Tridimensional</span>
+        </span>
+        <h1 class="text-3xl sm:text-5xl font-extrabold text-white tracking-tight leading-tight">
+          Visualización & Parametrización de Curvas y Superficies 3D
+        </h1>
+        <p class="text-slate-400 text-sm sm:text-base leading-relaxed">
+          Portal educativo interactivo desarrollado para la materia **Análisis Matemático II**. Explora superficies compuestas, parametrización vectorial, simulación gráfica en tiempo real y comandos listos para GeoGebra 3D.
+        </p>
+        
+        <div class="flex flex-wrap justify-center gap-4 pt-4">
+          <button onclick="navigateTo('football')" class="px-6 py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold rounded-xl shadow-lg shadow-indigo-600/30 transition flex items-center space-x-2 text-sm">
+            <i class="fa-solid fa-football"></i>
+            <span>Ver Proyecto Pelota 3D</span>
+          </button>
+          <button onclick="navigateTo('qr')" class="px-6 py-3 bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold rounded-xl border border-slate-700 transition flex items-center space-x-2 text-sm">
+            <i class="fa-solid fa-qrcode"></i>
+            <span>Generar Código QR</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Tarjetas de Características -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-6">
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-3 hover:border-slate-700 transition">
+          <div class="w-12 h-12 bg-amber-500/10 text-amber-400 rounded-xl flex items-center justify-center border border-amber-500/20 text-xl">
+            <i class="fa-solid fa-cube"></i>
+          </div>
+          <h3 class="font-bold text-white text-base">Modelado Elipsoidal</h3>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            Parametrización de un elipsoide prolado acostado y desplazado del origen de coordenadas ($X+4, Y+3, Z+5$).
+          </p>
+        </div>
+
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-3 hover:border-slate-700 transition">
+          <div class="w-12 h-12 bg-indigo-500/10 text-indigo-400 rounded-xl flex items-center justify-center border border-indigo-500/20 text-xl">
+            <i class="fa-solid fa-terminal"></i>
+          </div>
+          <h3 class="font-bold text-white text-base">Comandos GeoGebra</h3>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            Copiar fácilmente los comandos de superficie con exactitud de 9 argumentos para evitar errores en GeoGebra 3D.
+          </p>
+        </div>
+
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-3 hover:border-slate-700 transition">
+          <div class="w-12 h-12 bg-emerald-500/10 text-emerald-400 rounded-xl flex items-center justify-center border border-emerald-500/20 text-xl">
+            <i class="fa-solid fa-mobile-screen-button"></i>
+          </div>
+          <h3 class="font-bold text-white text-base">Acceso por QR Movil</h3>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            Publicación gratuita en la nube y generación instantánea de código QR para presentar desde celulares o carpetas.
+          </p>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- 2. SECCIÓN PROYECTO PELOTA DE FÚTBOL AMERICANO 3D -->
+    <section id="sec-football" class="p-4 sm:p-6 max-w-7xl mx-auto hidden grid-cols-1 lg:grid-cols-12 gap-6">
+      
+      <!-- Columna Izquierda: Visor 3D & GeoGebra (7 cols) -->
+      <div class="lg:col-span-7 flex flex-col space-y-4">
+        
+        <!-- Canvas de Renderizado -->
+        <div class="relative bg-slate-900 rounded-2xl border border-slate-800 overflow-hidden shadow-2xl flex-1 min-h-[460px] flex flex-col">
+          <!-- Overlay de estado -->
+          <div class="absolute top-4 left-4 z-10 bg-slate-950/80 backdrop-blur px-3 py-1.5 rounded-lg border border-slate-800 flex items-center space-x-2 text-xs">
+            <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+            <span id="viewer-status-title" class="font-medium text-slate-200">Renderizador 3D Paramétrico (Three.js)</span>
+          </div>
+
+          <div class="absolute top-4 right-4 z-10">
+            <button id="btn-toggle-view" onclick="switchView()" class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white shadow transition flex items-center space-x-2">
+              <i class="fa-solid fa-cube"></i>
+              <span id="view-toggle-text">Ver en GeoGebra Embebido</span>
+            </button>
+          </div>
+
+          <!-- Contenedores -->
+          <div id="three-container" class="w-full h-full min-h-[460px] relative cursor-grab active:cursor-grabbing"></div>
+
+          <div id="geogebra-container" class="w-full h-full min-h-[460px] hidden flex-col items-center justify-center bg-slate-900">
+            <div id="ggb-element" class="w-full h-full"></div>
+          </div>
+
+          <!-- Controles de pantalla -->
+          <div class="absolute bottom-4 left-4 right-4 z-10 flex justify-between items-center text-xs text-slate-400 bg-slate-950/75 backdrop-blur p-2.5 rounded-xl border border-slate-800">
+            <div class="flex items-center space-x-4">
+              <span><i class="fa-solid fa-rotate mr-1"></i> Arrastrar: Rotar</span>
+              <span><i class="fa-solid fa-arrows-up-down mr-1"></i> Zoom: Rueda del mouse</span>
+            </div>
+            <button onclick="resetCamera()" class="px-2 py-1 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded transition">
+              <i class="fa-solid fa-arrows-to-dot mr-1"></i> Centrar
+            </button>
+          </div>
+        </div>
+
+        <!-- Ecuación Matemática -->
+        <div class="bg-slate-900 rounded-xl border border-slate-800 p-4">
+          <h3 class="text-sm font-semibold text-slate-200 mb-2 flex items-center">
+            <i class="fa-solid fa-square-root-variable text-indigo-400 mr-2"></i> Formulación Paramétrica Vectorial
+          </h3>
+          <div class="bg-slate-950 rounded-lg p-3 text-xs font-mono text-indigo-300 overflow-x-auto border border-slate-800/80">
+            r(u, v) = ( 3.5·sin(u) + 4,  2·cos(u)·sin(v) + 3,  2·cos(u)·cos(v) + 5 )
+            <br>
+            <span class="text-slate-400">Dominio: u ∈ [-π/2, π/2],  v ∈ [0, 2π] • Desfase: (X=4, Y=3, Z=5)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Columna Derecha: Comandos GeoGebra (5 cols) -->
+      <div class="lg:col-span-5 flex flex-col space-y-4 custom-scrollbar lg:overflow-y-auto lg:max-h-[calc(100vh-6rem)]">
+        
+        <div class="bg-slate-900 rounded-2xl border border-slate-800 p-5 shadow-xl space-y-4">
+          <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+            <h2 class="font-bold text-base text-white flex items-center">
+              <i class="fa-solid fa-terminal text-emerald-400 mr-2.5"></i> Comandos para GeoGebra 3D
+            </h2>
+            <span class="text-[10px] bg-emerald-500/10 text-emerald-400 px-2 py-0.5 rounded border border-emerald-500/20 font-medium">9 Argumentos</span>
+          </div>
+
+          <!-- Snippet 1 -->
+          <div class="space-y-1.5">
+            <div class="flex items-center justify-between text-xs">
+              <span class="font-semibold text-amber-400">1. Pelota Acostada y Desfasada</span>
+              <button onclick="copyToClipboard('cmd1', this)" class="text-slate-400 hover:text-white text-xs flex items-center space-x-1 bg-slate-800 hover:bg-slate-700 px-2 py-1 rounded transition">
+                <i class="fa-regular fa-copy"></i>
+                <span>Copiar</span>
+              </button>
+            </div>
+            <pre id="cmd1" class="bg-slate-950 p-2.5 rounded-lg text-xs text-slate-300 overflow-x-auto border border-slate-800">Superficie(3.5 sen(u) + 4, 2 cos(u) sen(v) + 3, 2 cos(u) cos(v) + 5, u, -pi/2, pi/2, v, 0, 2 pi)</pre>
+          </div>
+
+          <!-- Snippet 2 -->
+          <div class="space-y-1.5">
+            <div class="flex items-center justify-between text-xs">
+              <span class="font-semibold text-slate-200">2. Franja blanca derecha (Superficie curva)</span>
+              <button onclick="copyToClipboard('cmd2', this)" class="text-slate-400 hover:text-white text-xs flex items-center space-x-1 bg-slate-800 hover:bg-slate-700 px-2 py-1 rounded transition">
+                <i class="fa-regular fa-copy"></i>
+                <span>Copiar</span>
+              </button>
+            </div>
+            <pre id="cmd2" class="bg-slate-950 p-2.5 rounded-lg text-xs text-slate-300 overflow-x-auto border border-slate-800">Superficie(3.51 sen(u) + 4, 2.01 cos(u) sen(v) + 3, 2.01 cos(u) cos(v) + 5, u, 0.85, 1.05, v, 0, 2 pi)</pre>
+          </div>
+
+          <!-- Snippet 3 -->
+          <div class="space-y-1.5">
+            <div class="flex items-center justify-between text-xs">
+              <span class="font-semibold text-slate-200">3. Franja blanca izquierda (Superficie curva)</span>
+              <button onclick="copyToClipboard('cmd3', this)" class="text-slate-400 hover:text-white text-xs flex items-center space-x-1 bg-slate-800 hover:bg-slate-700 px-2 py-1 rounded transition">
+                <i class="fa-regular fa-copy"></i>
+                <span>Copiar</span>
+              </button>
+            </div>
+            <pre id="cmd3" class="bg-slate-950 p-2.5 rounded-lg text-xs text-slate-300 overflow-x-auto border border-slate-800">Superficie(3.51 sen(u) + 4, 2.01 cos(u) sen(v) + 3, 2.01 cos(u) cos(v) + 5, u, -1.05, -0.85, v, 0, 2 pi)</pre>
+          </div>
+
+          <!-- Snippet 4 -->
+          <div class="space-y-1.5">
+            <div class="flex items-center justify-between text-xs">
+              <span class="font-semibold text-indigo-400">4. Tira principal del Cordón (Curva 3D)</span>
+              <button onclick="copyToClipboard('cmd4', this)" class="text-slate-400 hover:text-white text-xs flex items-center space-x-1 bg-slate-800 hover:bg-slate-700 px-2 py-1 rounded transition">
+                <i class="fa-regular fa-copy"></i>
+                <span>Copiar</span>
+              </button>
+            </div>
+            <pre id="cmd4" class="bg-slate-950 p-2.5 rounded-lg text-xs text-slate-300 overflow-x-auto border border-slate-800">Curva(t + 4, 2.02 + 3, 5, t, -1.5, 1.5)</pre>
+          </div>
+
+          <!-- Snippet 5 -->
+          <div class="space-y-1.5">
+            <div class="flex items-center justify-between text-xs">
+              <span class="font-semibold text-indigo-400">5. Puntadas transversales del Cordón</span>
+              <button onclick="copyToClipboard('cmd5', this)" class="text-slate-400 hover:text-white text-xs flex items-center space-x-1 bg-slate-800 hover:bg-slate-700 px-2 py-1 rounded transition">
+                <i class="fa-regular fa-copy"></i>
+                <span>Copiar</span>
+              </button>
+            </div>
+            <pre id="cmd5" class="bg-slate-950 p-2.5 rounded-lg text-xs text-slate-300 overflow-x-auto border border-slate-800">Secuencia(Curva(k + 4, 2.03 + 3, t + 5, t, -0.2, 0.2), k, -1.2, 1.2, 0.3)</pre>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 3. SECCIÓN GENERADORA DE CÓDIGO QR & PUBLICACIÓN -->
+    <section id="sec-qr" class="p-6 sm:p-12 max-w-5xl mx-auto hidden space-y-8">
+      
+      <div class="border-b border-slate-800 pb-4">
+        <h2 class="text-2xl font-bold text-white flex items-center">
+          <i class="fa-solid fa-qrcode text-emerald-400 mr-3"></i> Publicación Web & Generador de Código QR
+        </h2>
+        <p class="text-slate-400 text-xs sm:text-sm mt-1">
+          Genera un código QR para incluir en tus entregas impresas, carpetas o diapositivas para que tus profesores escaneen y abran la página.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
+        
+        <!-- Generador Interactivo QR -->
+        <div class="md:col-span-5 bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-5">
+          <h3 class="font-semibold text-sm text-white flex items-center">
+            <i class="fa-solid fa-wand-magic-sparkles text-emerald-400 mr-2"></i> Crear mi Código QR
+          </h3>
+
+          <div class="space-y-2">
+            <label class="text-xs text-slate-300 font-medium block">URL de tu sitio web publicado:</label>
+            <input type="text" id="qr-input-url" placeholder="https://tu-usuario.github.io/proyecto-am2" value="https://geogebra.org" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-emerald-500 transition">
+          </div>
+
+          <button onclick="generateQRCode()" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs rounded-xl shadow-lg shadow-emerald-600/20 transition flex items-center justify-center space-x-2">
+            <i class="fa-solid fa-rotate"></i>
+            <span>Generar Código QR</span>
+          </button>
+
+          <!-- Contenedor del QR -->
+          <div class="flex flex-col items-center justify-center p-6 bg-slate-950 rounded-xl border border-slate-800/80 min-h-[220px]">
+            <div id="qrcode-box" class="p-3 bg-white rounded-xl shadow-lg"></div>
+            <p id="qr-url-preview" class="text-[11px] text-slate-400 mt-3 font-mono truncate max-w-[220px]">https://geogebra.org</p>
+          </div>
+
+          <button onclick="downloadQR()" class="w-full py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 font-medium text-xs rounded-lg border border-slate-700 transition flex items-center justify-center space-x-2">
+            <i class="fa-solid fa-download"></i>
+            <span>Descargar Imagen QR</span>
+          </button>
+        </div>
+
+        <!-- Instrucciones de Publicación Gratis -->
+        <div class="md:col-span-7 bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4">
+          <h3 class="font-semibold text-sm text-white flex items-center">
+            <i class="fa-solid fa-cloud-arrow-up text-indigo-400 mr-2"></i> ¿Cómo publicar gratis en la nube?
+          </h3>
+
+          <div class="space-y-4 text-xs text-slate-300 leading-relaxed">
+            
+            <div class="p-3 bg-slate-950 rounded-xl border border-slate-800">
+              <span class="font-bold text-indigo-400 block mb-1">Opción A: GitHub Pages (Recomendado)</span>
+              <ol class="list-decimal list-inside space-y-1 text-slate-400">
+                <li>Crea un repositorio en <strong class="text-slate-200">GitHub.com</strong>.</li>
+                <li>Sube este archivo guardándolo como <code class="text-amber-300">index.html</code>.</li>
+                <li>Ve a <strong class="text-slate-200">Settings $\rightarrow$ Pages</strong> y selecciona la rama principal (`main`).</li>
+                <li>Copia la URL pública generada y pégala en el panel de la izquierda para tu QR.</li>
+              </ol>
+            </div>
+
+            <div class="p-3 bg-slate-950 rounded-xl border border-slate-800">
+              <span class="font-bold text-emerald-400 block mb-1">Opción B: Netlify Drop / Vercel (Sin cuenta técnica)</span>
+              <ol class="list-decimal list-inside space-y-1 text-slate-400">
+                <li>Entra en <strong class="text-slate-200">app.netlify.com/drop</strong>.</li>
+                <li>Arrastra la carpeta que contiene tu archivo <code class="text-amber-300">index.html</code>.</li>
+                <li>Obtendrás una URL web pública instantánea para generar tu QR.</li>
+              </ol>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- Notificación Toast -->
+  <div id="toast" class="fixed bottom-6 right-6 bg-emerald-600 text-white px-4 py-2.5 rounded-xl shadow-2xl text-xs font-semibold flex items-center space-x-2 transition-all duration-300 opacity-0 translate-y-4 pointer-events-none z-50">
+    <i class="fa-solid fa-circle-check text-sm"></i>
+    <span id="toast-message">¡Copiado al portapapeles!</span>
+  </div>
+
+  <!-- Lógica JavaScript -->
+  <script>
+    // Control de Navegación entre Secciones
+    function navigateTo(sectionId) {
+      document.getElementById('sec-home').classList.add('hidden');
+      document.getElementById('sec-football').classList.add('hidden');
+      document.getElementById('sec-football').classList.remove('grid');
+      document.getElementById('sec-qr').classList.add('hidden');
+
+      if (sectionId === 'home') {
+        document.getElementById('sec-home').classList.remove('hidden');
+      } else if (sectionId === 'football') {
+        const secFootball = document.getElementById('sec-football');
+        secFootball.classList.remove('hidden');
+        secFootball.classList.add('grid');
+        setTimeout(() => { onWindowResize(); }, 100);
+      } else if (sectionId === 'qr') {
+        document.getElementById('sec-qr').classList.remove('hidden');
+      }
+    }
+
+    // Toggle de Menú Sidebar
+    function toggleMenu() {
+      const sidebar = document.getElementById('sidebar');
+      const overlay = document.getElementById('menu-overlay');
+
+      if (sidebar.classList.contains('translate-x-full')) {
+        sidebar.classList.remove('translate-x-full');
+        overlay.classList.remove('hidden');
+        setTimeout(() => overlay.classList.remove('opacity-0'), 10);
+      } else {
+        sidebar.classList.add('translate-x-full');
+        overlay.classList.add('opacity-0');
+        setTimeout(() => overlay.classList.add('hidden'), 300);
+      }
+    }
+
+    // Three.js Renderizador 3D
+    let scene, camera, renderer, ballMesh, stripeRightMesh, stripeLeftMesh, lacesGroup;
+    let isDragging = false;
+    let previousMousePosition = { x: 0, y: 0 };
+
+    window.onload = function() {
+      initThreeJS();
+      animate();
+      generateQRCode();
+    };
+
+    function initThreeJS() {
+      const container = document.getElementById('three-container');
+      if (!container) return;
+      const width = container.clientWidth || 600;
+      const height = container.clientHeight || 460;
+
+      scene = new THREE.Scene();
+      scene.background = new THREE.Color(0x0f172a);
+
+      camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);
+      camera.position.set(12, 10, 16);
+      camera.lookAt(4, 3, 5);
+
+      const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+      scene.add(ambientLight);
+
+      const dirLight1 = new THREE.DirectionalLight(0xffffff, 0.8);
+      dirLight1.position.set(15, 20, 15);
+      scene.add(dirLight1);
+
+      const gridHelper = new THREE.GridHelper(20, 20, 0x334155, 0x1e293b);
+      scene.add(gridHelper);
+
+      const axesHelper = new THREE.AxesHelper(3);
+      axesHelper.position.set(0, 0, 0);
+      scene.add(axesHelper);
+
+      // Parametrización
+      const cx = 4, cy = 3, cz = 5;
+      const a = 3.5, b = 2.0, c = 2.0;
+
+      // 1. Cuerpo
+      const ballGeom = createParametricSurface((u, v, target) => {
+        const uAng = (u - 0.5) * Math.PI;
+        const vAng = v * Math.PI * 2;
+        target.set(a * Math.sin(uAng) + cx, b * Math.cos(uAng) * Math.sin(vAng) + cy, c * Math.cos(uAng) * Math.cos(vAng) + cz);
+      }, 50, 50);
+
+      const ballMat = new THREE.MeshStandardMaterial({ color: 0x8b4513, roughness: 0.6, side: THREE.DoubleSide });
+      ballMesh = new THREE.Mesh(ballGeom, ballMat);
+      scene.add(ballMesh);
+
+      // 2. Franjas Blancas Curvas
+      const whiteMat = new THREE.MeshStandardMaterial({ color: 0xf8fafc, roughness: 0.4, side: THREE.DoubleSide });
+
+      const stripeRightGeom = createParametricSurfaceSubdomain((uAng, v, target) => {
+        const vAng = v * Math.PI * 2;
+        target.set(3.51 * Math.sin(uAng) + cx, 2.01 * Math.cos(uAng) * Math.sin(vAng) + cy, 2.01 * Math.cos(uAng) * Math.cos(vAng) + cz);
+      }, 0.85, 1.05, 30, 40);
+      stripeRightMesh = new THREE.Mesh(stripeRightGeom, whiteMat);
+      scene.add(stripeRightMesh);
+
+      const stripeLeftGeom = createParametricSurfaceSubdomain((uAng, v, target) => {
+        const vAng = v * Math.PI * 2;
+        target.set(3.51 * Math.sin(uAng) + cx, 2.01 * Math.cos(uAng) * Math.sin(vAng) + cy, 2.01 * Math.cos(uAng) * Math.cos(vAng) + cz);
+      }, -1.05, -0.85, 30, 40);
+      stripeLeftMesh = new THREE.Mesh(stripeLeftGeom, whiteMat);
+      scene.add(stripeLeftMesh);
+
+      // 3. Cordón
+      lacesGroup = new THREE.Group();
+      const laceMainGeom = new THREE.BoxGeometry(3.0, 0.08, 0.12);
+      const laceMainMesh = new THREE.Mesh(laceMainGeom, whiteMat);
+      laceMainMesh.position.set(cx, cy + 2.05, cz);
+      lacesGroup.add(laceMainMesh);
+
+      for (let i = -1.2; i <= 1.2; i += 0.35) {
+        const stitchGeom = new THREE.BoxGeometry(0.08, 0.1, 0.5);
+        const stitchMesh = new THREE.Mesh(stitchGeom, whiteMat);
+        stitchMesh.position.set(cx + i, cy + 2.07, cz);
+        lacesGroup.add(stitchMesh);
+      }
+      scene.add(lacesGroup);
+
+      renderer = new THREE.WebGLRenderer({ antialias: true });
+      renderer.setSize(width, height);
+      renderer.setPixelRatio(window.devicePixelRatio);
+      container.appendChild(renderer.domElement);
+
+      container.addEventListener('mousedown', (e) => {
+        isDragging = true;
+        previousMousePosition = { x: e.clientX, y: e.clientY };
+      });
+
+      container.addEventListener('mousemove', (e) => {
+        if (!isDragging) return;
+        const deltaX = e.clientX - previousMousePosition.x;
+        const deltaY = e.clientY - previousMousePosition.y;
+
+        const center = new THREE.Vector3(cx, cy, cz);
+        camera.position.sub(center);
+        camera.position.applyAxisAngle(new THREE.Vector3(0, 1, 0), -deltaX * 0.008);
+        const axis = new THREE.Vector3().crossVectors(camera.position, camera.up).normalize();
+        camera.position.applyAxisAngle(axis, -deltaY * 0.008);
+        camera.position.add(center);
+        camera.lookAt(center);
+
+        previousMousePosition = { x: e.clientX, y: e.clientY };
+      });
+
+      window.addEventListener('mouseup', () => { isDragging = false; });
+      window.addEventListener('resize', onWindowResize);
+    }
+
+    function createParametricSurface(func, slices, stacks) {
+      const geometry = new THREE.BufferGeometry();
+      const positions = [], indices = [];
+
+      for (let i = 0; i <= stacks; i++) {
+        const u = i / stacks;
+        for (let j = 0; j <= slices; j++) {
+          const v = j / slices;
+          const vec = new THREE.Vector3();
+          func(u, v, vec);
+          positions.push(vec.x, vec.y, vec.z);
+        }
+      }
+
+      for (let i = 0; i < stacks; i++) {
+        for (let j = 0; j < slices; j++) {
+          const a = i * (slices + 1) + j;
+          const b = a + 1;
+          const c = (i + 1) * (slices + 1) + j;
+          const d = c + 1;
+          indices.push(a, b, d, a, d, c);
+        }
+      }
+
+      geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+      geometry.setIndex(indices);
+      geometry.computeVertexNormals();
+      return geometry;
+    }
+
+    function createParametricSurfaceSubdomain(func, uMin, uMax, slices, stacks) {
+      return createParametricSurface((uNorm, vNorm, target) => {
+        const uReal = uMin + uNorm * (uMax - uMin);
+        func(uReal, vNorm, target);
+      }, slices, stacks);
+    }
+
+    function animate() {
+      requestAnimationFrame(animate);
+      renderer && renderer.render(scene, camera);
+    }
+
+    function resetCamera() {
+      camera.position.set(12, 10, 16);
+      camera.lookAt(4, 3, 5);
+    }
+
+    function onWindowResize() {
+      const container = document.getElementById('three-container');
+      if (!container || !renderer) return;
+      const width = container.clientWidth;
+      const height = container.clientHeight;
+      camera.aspect = width / height;
+      camera.updateProjectionMatrix();
+      renderer.setSize(width, height);
+    }
+
+    // Copiar Comandos al Portapapeles
+    function copyToClipboard(elementId, btnElement) {
+      const text = document.getElementById(elementId).innerText;
+      const textarea = document.createElement('textarea');
+      textarea.value = text;
+      document.body.appendChild(textarea);
+      textarea.select();
+      
+      try {
+        document.execCommand('copy');
+        showToast('¡Comando copiado!');
+      } catch (err) {
+        showToast('Error al copiar');
+      }
+      document.body.removeChild(textarea);
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      document.getElementById('toast-message').innerText = msg;
+      toast.classList.remove('opacity-0', 'translate-y-4', 'pointer-events-none');
+      setTimeout(() => toast.classList.add('opacity-0', 'translate-y-4', 'pointer-events-none'), 2200);
+    }
+
+    // Alternar GeoGebra Embebido
+    let ggbAppLoaded = false;
+    function switchView() {
+      const threeContainer = document.getElementById('three-container');
+      const ggbContainer = document.getElementById('geogebra-container');
+      const btnText = document.getElementById('view-toggle-text');
+
+      if (ggbContainer.classList.contains('hidden')) {
+        threeContainer.classList.add('hidden');
+        ggbContainer.classList.remove('hidden');
+        ggbContainer.classList.add('flex');
+        btnText.innerText = 'Ver en Renderizador 3D';
+
+        if (!ggbAppLoaded) {
+          const params = {
+            "appName": "3d",
+            "width": ggbContainer.clientWidth || 600,
+            "height": ggbContainer.clientHeight || 460,
+            "showToolBar": true,
+            "showAlgebraInput": true,
+            "appletOnLoad": function(api) {
+              api.evalCommand('Pelota = Superficie(3.5 sen(u) + 4, 2 cos(u) sen(v) + 3, 2 cos(u) cos(v) + 5, u, -pi/2, pi/2, v, 0, 2 pi)');
+              api.evalCommand('FranjaSup = Superficie(3.51 sen(u) + 4, 2.01 cos(u) sen(v) + 3, 2.01 cos(u) cos(v) + 5, u, 0.85, 1.05, v, 0, 2 pi)');
+              api.evalCommand('FranjaInf = Superficie(3.51 sen(u) + 4, 2.01 cos(u) sen(v) + 3, 2.01 cos(u) cos(v) + 5, u, -1.05, -0.85, v, 0, 2 pi)');
+              api.evalCommand('Cordon = Curva(t + 4, 2.02 + 3, 5, t, -1.5, 1.5)');
+              api.evalCommand('Puntadas = Secuencia(Curva(k + 4, 2.03 + 3, t + 5, t, -0.2, 0.2), k, -1.2, 1.2, 0.3)');
+            }
+          };
+          const applet = new GGBApplet(params, true);
+          applet.inject('ggb-element');
+          ggbAppLoaded = true;
+        }
+      } else {
+        ggbContainer.classList.add('hidden');
+        ggbContainer.classList.remove('flex');
+        threeContainer.classList.remove('hidden');
+        btnText.innerText = 'Ver en GeoGebra Embebido';
+      }
+    }
+
+    // Generador de Código QR
+    let qrcodeObj = null;
+    function generateQRCode() {
+      const urlInput = document.getElementById('qr-input-url').value.trim() || 'https://geogebra.org';
+      const qrBox = document.getElementById('qrcode-box');
+      qrBox.innerHTML = '';
+
+      qrcodeObj = new QRCode(qrBox, {
+        text: urlInput,
+        width: 160,
+        height: 160,
+        colorDark : "#020617",
+        colorLight : "#ffffff",
+        correctLevel : QRCode.CorrectLevel.H
+      });
+
+      document.getElementById('qr-url-preview').innerText = urlInput;
+    }
+
+    function downloadQR() {
+      const qrImg = document.querySelector('#qrcode-box img');
+      if (qrImg && qrImg.src) {
+        const link = document.createElement('a');
+        link.href = qrImg.src;
+        link.download = 'codigo-qr-analisis2.png';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      } else {
+        showToast('Genera primero un código QR válido');
+      }
+    }
+  </script>
+</body>
+</html>
